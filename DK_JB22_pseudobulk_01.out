@@ -1,0 +1,455 @@
+- The project is out-of-sync -- use `renv::status()` for details.
+Startup completed in 21.41 seconds
+- renv activation:    4.00 seconds
+- library attachment: 17.41 seconds
+
+Pseudobulk SCE list | JB22_pseudobulk:
+• Peritoneum:
+  - Macrophages 1321 x 33699 (sample x feature)
+• Liver:
+  - Bcells 550 x 33699 (sample x feature)
+  - Macrophages 151 x 33699 (sample x feature)
+  - Neutrophils 111 x 33699 (sample x feature)
+• Spleen:
+  - Bcells 1988 x 33699 (sample x feature)
+Skip: Liver  Bcells
+
+------------------------------------------------------------------------
+Run:     Liver  Neutrophils
+Out dir: results/JB22_pseudobulk/dge/DESeq2_Wald_genotype_Liver_Neutrophils.rds
+Model design
+ - Formula:   ~genotype
+ - Intercept: NTC
+ - Nr. coefs: 36
+ - Shuffled:  FALSE
+Feature selection
+ - Nr. features: 5528 (33699)
+
+ERROR! Check error file:
+results/JB22_pseudobulk/dge/DESeq2_Wald_genotype_Liver_Neutrophils.error.txt
+------------------------------------------------------------------------
+
+------------------------------------------------------------------------
+Run:     Liver  Macrophages
+Out dir: results/JB22_pseudobulk/dge/DESeq2_Wald_genotype_Liver_Macrophages.rds
+Model design
+ - Formula:   ~genotype
+ - Intercept: NTC
+ - Nr. coefs: 58
+ - Shuffled:  FALSE
+Feature selection
+ - Nr. features: 7271 (33699)
+
+ERROR! Check error file:
+results/JB22_pseudobulk/dge/DESeq2_Wald_genotype_Liver_Macrophages.error.txt
+------------------------------------------------------------------------
+
+------------------------------------------------------------------------
+Run:     Liver  Neutrophils
+Out dir: results/JB22_pseudobulk/dge/DESeq2_Wald_genotype_sample_Liver_Neutrophils.rds
+Model design
+ - Formula:   ~genotype + sample
+ - Intercept: NTC
+ - Nr. coefs: 41
+ - Shuffled:  FALSE
+Feature selection
+ - Nr. features: 5528 (33699)
+
+ERROR! Check error file:
+results/JB22_pseudobulk/dge/DESeq2_Wald_genotype_sample_Liver_Neutrophils.error.txt
+------------------------------------------------------------------------
+
+------------------------------------------------------------------------
+Run:     Liver  Macrophages
+Out dir: results/JB22_pseudobulk/dge/DESeq2_Wald_genotype_sample_Liver_Macrophages.rds
+Model design
+ - Formula:   ~genotype + sample
+ - Intercept: NTC
+ - Nr. coefs: 63
+ - Shuffled:  FALSE
+Feature selection
+ - Nr. features: 7271 (33699)
+
+ERROR! Check error file:
+results/JB22_pseudobulk/dge/DESeq2_Wald_genotype_sample_Liver_Macrophages.error.txt
+------------------------------------------------------------------------
+
+------------------------------------------------------------------------
+Run:     Liver  Bcells
+Out dir: results/JB22_pseudobulk/dge/DESeq2_Wald_genotype_Liver_Bcells.rds
+Model design
+ - Formula:   ~genotype
+ - Intercept: NTC
+ - Nr. coefs: 161
+ - Shuffled:  FALSE
+Feature selection
+ - Nr. features: 3838 (33699)
+
+ERROR! Check error file:
+results/JB22_pseudobulk/dge/DESeq2_Wald_genotype_Liver_Bcells.error.txt
+------------------------------------------------------------------------
+
+------------------------------------------------------------------------
+Run:     Liver  Bcells
+Out dir: results/JB22_pseudobulk/dge/DESeq2_Wald_genotype_sample_Liver_Bcells.rds
+Model design
+ - Formula:   ~genotype + sample
+ - Intercept: NTC
+ - Nr. coefs: 166
+ - Shuffled:  FALSE
+Feature selection
+ - Nr. features: 3838 (33699)
+
+ERROR! Check error file:
+results/JB22_pseudobulk/dge/DESeq2_Wald_genotype_sample_Liver_Bcells.error.txt
+------------------------------------------------------------------------
+
+------------------------------------------------------------------------
+Run:     Liver  Neutrophils
+Out dir: results/JB22_pseudobulk/dge/limma_voom_genotype_Liver_Neutrophils.rds
+Model design
+ - Formula:   ~genotype
+ - Intercept: NTC
+ - Nr. coefs: 36
+ - Shuffled:  FALSE
+Feature selection
+ - Nr. features: 5528 (33699)
+Model fit
+ - DGE approach: limma_voom
+Extracted results
+ - Nr. coefs: 35       (without intercept)
+ - Nr. tests: 193480   (features × coefs)
+------------------------------------------------------------------------
+
+------------------------------------------------------------------------
+Run:     Liver  Neutrophils
+Out dir: results/JB22_pseudobulk/dge/limma_voom_genotype_sample_Liver_Neutrophils.rds
+Model design
+ - Formula:   ~genotype + sample
+ - Intercept: NTC
+ - Nr. coefs: 41
+ - Shuffled:  FALSE
+Feature selection
+ - Nr. features: 5528 (33699)
+Model fit
+ - DGE approach: limma_voom
+Extracted results
+ - Nr. coefs: 35       (without intercept)
+ - Nr. tests: 193480   (features × coefs)
+------------------------------------------------------------------------
+
+------------------------------------------------------------------------
+Run:     Peritoneum  Macrophages
+Out dir: results/JB22_pseudobulk/dge/DESeq2_Wald_genotype_Peritoneum_Macrophages.rds
+Model design
+ - Formula:   ~genotype
+ - Intercept: NTC
+ - Nr. coefs: 342
+ - Shuffled:  FALSE
+Feature selection
+ - Nr. features: 9762 (33699)
+
+ERROR! Check error file:
+results/JB22_pseudobulk/dge/DESeq2_Wald_genotype_Peritoneum_Macrophages.error.txt
+------------------------------------------------------------------------
+
+------------------------------------------------------------------------
+Run:     Peritoneum  Macrophages
+Out dir: results/JB22_pseudobulk/dge/DESeq2_Wald_genotype_sample_Peritoneum_Macrophages.rds
+Model design
+ - Formula:   ~genotype + sample
+ - Intercept: NTC
+ - Nr. coefs: 345
+ - Shuffled:  FALSE
+Feature selection
+ - Nr. features: 9762 (33699)
+
+ERROR! Check error file:
+results/JB22_pseudobulk/dge/DESeq2_Wald_genotype_sample_Peritoneum_Macrophages.error.txt
+------------------------------------------------------------------------
+
+------------------------------------------------------------------------
+Run:     Liver  Macrophages
+Out dir: results/JB22_pseudobulk/dge/limma_voom_genotype_Liver_Macrophages.rds
+Model design
+ - Formula:   ~genotype
+ - Intercept: NTC
+ - Nr. coefs: 58
+ - Shuffled:  FALSE
+Feature selection
+ - Nr. features: 7271 (33699)
+Model fit
+ - DGE approach: limma_voom
+Extracted results
+ - Nr. coefs: 57       (without intercept)
+ - Nr. tests: 414447   (features × coefs)
+------------------------------------------------------------------------
+
+------------------------------------------------------------------------
+Run:     Liver  Macrophages
+Out dir: results/JB22_pseudobulk/dge/limma_voom_genotype_sample_Liver_Macrophages.rds
+Model design
+ - Formula:   ~genotype + sample
+ - Intercept: NTC
+ - Nr. coefs: 63
+ - Shuffled:  FALSE
+Feature selection
+ - Nr. features: 7271 (33699)
+Model fit
+ - DGE approach: limma_voom
+Extracted results
+ - Nr. coefs: 57       (without intercept)
+ - Nr. tests: 414447   (features × coefs)
+------------------------------------------------------------------------
+
+------------------------------------------------------------------------
+Run:     Spleen  Bcells
+Out dir: results/JB22_pseudobulk/dge/DESeq2_Wald_genotype_Spleen_Bcells.rds
+Model design
+ - Formula:   ~genotype
+ - Intercept: NTC
+ - Nr. coefs: 348
+ - Shuffled:  FALSE
+Feature selection
+ - Nr. features: 8169 (33699)
+
+ERROR! Check error file:
+results/JB22_pseudobulk/dge/DESeq2_Wald_genotype_Spleen_Bcells.error.txt
+------------------------------------------------------------------------
+
+------------------------------------------------------------------------
+Run:     Spleen  Bcells
+Out dir: results/JB22_pseudobulk/dge/DESeq2_Wald_genotype_sample_Spleen_Bcells.rds
+Model design
+ - Formula:   ~genotype + sample
+ - Intercept: NTC
+ - Nr. coefs: 360
+ - Shuffled:  FALSE
+Feature selection
+ - Nr. features: 8169 (33699)
+
+ERROR! Check error file:
+results/JB22_pseudobulk/dge/DESeq2_Wald_genotype_sample_Spleen_Bcells.error.txt
+------------------------------------------------------------------------
+
+------------------------------------------------------------------------
+Run:     Liver  Neutrophils
+Out dir: results/JB22_pseudobulk/dge/edgeR_QLF_genotype_Liver_Neutrophils.rds
+Model design
+ - Formula:   ~genotype
+ - Intercept: NTC
+ - Nr. coefs: 36
+ - Shuffled:  FALSE
+Feature selection
+ - Nr. features: 5528 (33699)
+Model fit
+ - DGE approach: edgeR_QLF
+Extracted results
+ - Nr. coefs: 35       (without intercept)
+ - Nr. tests: 193480   (features × coefs)
+------------------------------------------------------------------------
+
+------------------------------------------------------------------------
+Run:     Liver  Bcells
+Out dir: results/JB22_pseudobulk/dge/limma_voom_genotype_sample_Liver_Bcells.rds
+Model design
+ - Formula:   ~genotype + sample
+ - Intercept: NTC
+ - Nr. coefs: 166
+ - Shuffled:  FALSE
+Feature selection
+ - Nr. features: 3838 (33699)
+Model fit
+ - DGE approach: limma_voom
+Extracted results
+ - Nr. coefs: 160      (without intercept)
+ - Nr. tests: 614080   (features × coefs)
+------------------------------------------------------------------------
+
+------------------------------------------------------------------------
+Run:     Liver  Neutrophils
+Out dir: results/JB22_pseudobulk/dge/edgeR_QLF_genotype_sample_Liver_Neutrophils.rds
+Model design
+ - Formula:   ~genotype + sample
+ - Intercept: NTC
+ - Nr. coefs: 41
+ - Shuffled:  FALSE
+Feature selection
+ - Nr. features: 5528 (33699)
+Model fit
+ - DGE approach: edgeR_QLF
+Extracted results
+ - Nr. coefs: 35       (without intercept)
+ - Nr. tests: 193480   (features × coefs)
+------------------------------------------------------------------------
+
+------------------------------------------------------------------------
+Run:     Liver  Macrophages
+Out dir: results/JB22_pseudobulk/dge/edgeR_QLF_genotype_Liver_Macrophages.rds
+Model design
+ - Formula:   ~genotype
+ - Intercept: NTC
+ - Nr. coefs: 58
+ - Shuffled:  FALSE
+Feature selection
+ - Nr. features: 7271 (33699)
+Model fit
+ - DGE approach: edgeR_QLF
+Extracted results
+ - Nr. coefs: 57       (without intercept)
+ - Nr. tests: 414447   (features × coefs)
+------------------------------------------------------------------------
+
+------------------------------------------------------------------------
+Run:     Peritoneum  Macrophages
+Out dir: results/JB22_pseudobulk/dge/limma_voom_genotype_sample_Peritoneum_Macrophages.rds
+Model design
+ - Formula:   ~genotype + sample
+ - Intercept: NTC
+ - Nr. coefs: 345
+ - Shuffled:  FALSE
+Feature selection
+ - Nr. features: 9762 (33699)
+Model fit
+ - DGE approach: limma_voom
+Extracted results
+ - Nr. coefs: 341      (without intercept)
+ - Nr. tests: 3328842  (features × coefs)
+------------------------------------------------------------------------
+
+------------------------------------------------------------------------
+Run:     Peritoneum  Macrophages
+Out dir: results/JB22_pseudobulk/dge/limma_voom_genotype_Peritoneum_Macrophages.rds
+Model design
+ - Formula:   ~genotype
+ - Intercept: NTC
+ - Nr. coefs: 342
+ - Shuffled:  FALSE
+Feature selection
+ - Nr. features: 9762 (33699)
+Model fit
+ - DGE approach: limma_voom
+Extracted results
+ - Nr. coefs: 341      (without intercept)
+ - Nr. tests: 3328842  (features × coefs)
+------------------------------------------------------------------------
+
+------------------------------------------------------------------------
+Run:     Spleen  Bcells
+Out dir: results/JB22_pseudobulk/dge/limma_voom_genotype_Spleen_Bcells.rds
+Model design
+ - Formula:   ~genotype
+ - Intercept: NTC
+ - Nr. coefs: 348
+ - Shuffled:  FALSE
+Feature selection
+ - Nr. features: 8169 (33699)
+Model fit
+ - DGE approach: limma_voom
+Extracted results
+ - Nr. coefs: 347      (without intercept)
+ - Nr. tests: 2834643  (features × coefs)
+------------------------------------------------------------------------
+
+------------------------------------------------------------------------
+Run:     Spleen  Bcells
+Out dir: results/JB22_pseudobulk/dge/limma_voom_genotype_sample_Spleen_Bcells.rds
+Model design
+ - Formula:   ~genotype + sample
+ - Intercept: NTC
+ - Nr. coefs: 360
+ - Shuffled:  FALSE
+Feature selection
+ - Nr. features: 8169 (33699)
+Model fit
+ - DGE approach: limma_voom
+Extracted results
+ - Nr. coefs: 347      (without intercept)
+ - Nr. tests: 2834643  (features × coefs)
+------------------------------------------------------------------------
+
+------------------------------------------------------------------------
+Run:     Liver  Bcells
+Out dir: results/JB22_pseudobulk/dge/edgeR_QLF_genotype_Liver_Bcells.rds
+Model design
+ - Formula:   ~genotype
+ - Intercept: NTC
+ - Nr. coefs: 161
+ - Shuffled:  FALSE
+Feature selection
+ - Nr. features: 3838 (33699)
+Model fit
+ - DGE approach: edgeR_QLF
+Extracted results
+ - Nr. coefs: 160      (without intercept)
+ - Nr. tests: 614080   (features × coefs)
+------------------------------------------------------------------------
+
+------------------------------------------------------------------------
+Run:     Liver  Macrophages
+Out dir: results/JB22_pseudobulk/dge/edgeR_QLF_genotype_sample_Liver_Macrophages.rds
+Model design
+ - Formula:   ~genotype + sample
+ - Intercept: NTC
+ - Nr. coefs: 63
+ - Shuffled:  FALSE
+Feature selection
+ - Nr. features: 7271 (33699)
+Model fit
+ - DGE approach: edgeR_QLF
+Extracted results
+ - Nr. coefs: 57       (without intercept)
+ - Nr. tests: 414447   (features × coefs)
+------------------------------------------------------------------------
+
+------------------------------------------------------------------------
+Run:     Peritoneum  Macrophages
+Out dir: results/JB22_pseudobulk/dge/edgeR_QLF_genotype_Peritoneum_Macrophages.rds
+Model design
+ - Formula:   ~genotype
+ - Intercept: NTC
+ - Nr. coefs: 342
+ - Shuffled:  FALSE
+Feature selection
+ - Nr. features: 9762 (33699)
+Model fit
+ - DGE approach: edgeR_QLF
+Extracted results
+ - Nr. coefs: 341      (without intercept)
+ - Nr. tests: 3328842  (features × coefs)
+------------------------------------------------------------------------
+
+------------------------------------------------------------------------
+Run:     Spleen  Bcells
+Out dir: results/JB22_pseudobulk/dge/edgeR_QLF_genotype_Spleen_Bcells.rds
+Model design
+ - Formula:   ~genotype
+ - Intercept: NTC
+ - Nr. coefs: 348
+ - Shuffled:  FALSE
+Feature selection
+ - Nr. features: 8169 (33699)
+Model fit
+ - DGE approach: edgeR_QLF
+Extracted results
+ - Nr. coefs: 347      (without intercept)
+ - Nr. tests: 2834643  (features × coefs)
+------------------------------------------------------------------------
+
+------------------------------------------------------------------------
+Run:     Liver  Bcells
+Out dir: results/JB22_pseudobulk/dge/edgeR_QLF_genotype_sample_Liver_Bcells.rds
+Model design
+ - Formula:   ~genotype + sample
+ - Intercept: NTC
+ - Nr. coefs: 166
+ - Shuffled:  FALSE
+Feature selection
+ - Nr. features: 3838 (33699)
+Model fit
+ - DGE approach: edgeR_QLF
+Extracted results
+ - Nr. coefs: 160      (without intercept)
+ - Nr. tests: 614080   (features × coefs)
+------------------------------------------------------------------------
+

@@ -3,6 +3,19 @@
 ## ============================================================================
 ## Title: Arc Institute in vivo pertubation screens
 ## Author: dkatzlberger
-## Date: 26.01.2026
+## Date: 27.01.2026
 ## ============================================================================
 
+## Excluded files
+# Software settings
+.Renviron
+.Rprofile
+.vscode
+
+## Excluded directories
+# Generated data
+/results
+/presentations
+
+# Library manager
+/renv

@@ -1,0 +1,13 @@
+qsub \
+  -b y \
+  -N DK_JB22_pseudobulk_02 \
+  -l hostname=trude.came.sbg.ac.at \
+  -pe smp 30 \
+  -cwd \
+  -V \
+  -o DK_JB22_pseudobulk_02.out \
+  -e DK_JB22_pseudobulk_02.err \
+  singularity exec \
+  -B /usr/local/CAME/vscratch:/vscratch \
+  /vscratch/wes/rocker/rocker_rstudio_4.5.sif \
+  Rscript R/JB22_pseudobulk_script.R
