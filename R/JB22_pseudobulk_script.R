@@ -88,49 +88,6 @@ JB22_pb_sce_list <- .combine_pseudobulk(
 )
 
 ## Normalization ==============================================================
-### fun. ----------------------------------------------------------------------
-
-
-# Density: sample density
-.plot_smpl_density <- function(
-  sce,
-  assay_name,
-  n_samples = 10
-) {
-
-  stopifnot(assay_name %in% assayNames(sce))
-
-  mat <- assay(sce, assay_name)
-
-  n_samples <- min(n_samples, ncol(mat))
-  mat <- mat[, seq_len(n_samples), drop = FALSE]
-
-  df <- data.frame(
-    value  = as.vector(mat),
-    sample = rep(colnames(mat), each = nrow(mat))
-  )
-
-  # ggplot
-  ggplot(
-    data = df,
-    mapping = aes(
-      x = value, 
-      color = sample
-    )
-  ) +
-  geom_density(
-    linewidth = 0.1,
-    show.legend = FALSE
-  ) +
-  labs(
-    x = assay_name,
-    y = "Density"
-  ) +
-  .theme_DK()
-
-}
-
-### JB22 norm. and plot -------------------------------------------------------
 
 # Normalize
 JB22_pb_norm_sce_list <- lapply(JB22_pb_sce_list, .normalize_pseudobulk)
