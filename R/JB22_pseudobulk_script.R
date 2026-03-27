@@ -21,14 +21,6 @@
 ## Spleen:     Bcells
 
 
-## Color schemes ==============================================================
-
-.celltype_pal <- c(
-  Bcells = "#fbb4ae",
-  Macrophages = "#b3cde3",
-  Neutrophils = "#ccebc5"
-)
-
 ## Libraries =================================================================
 
 # Scource R scripts
@@ -53,6 +45,14 @@ dir.create(tab_path, recursive = TRUE, showWarnings = FALSE)
 
 # Shared directory (location: vscratch)
 JB22_pb_dir  <- "/vscratch/wes/arc/share"
+
+## Color schemes ==============================================================
+
+.celltype_pal <- c(
+  Bcells = "#fbb4ae",
+  Macrophages = "#b3cde3",
+  Neutrophils = "#ccebc5"
+)
 
 ## Dataset ====================================================================
 
