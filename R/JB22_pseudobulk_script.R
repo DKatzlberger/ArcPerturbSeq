@@ -33,12 +33,13 @@ source("R/JB22_pseudobulk_utils.R")
 ## Directories ================================================================
 
 # Define paths
-res_path <- file.path("results", "JB22_pseudobulk")
+res_path <- file.path("results", "JB22_pseudobulk_orig")
 fig_path <- file.path(res_path, "fig")
 dge_path <- file.path(res_path, "dge")
 tab_path <- file.path(res_path, "tab")
 
 # Create output dirs
+dir.create(res_path, recursive = TRUE, showWarnings = FALSE)
 dir.create(fig_path, recursive = TRUE, showWarnings = FALSE)
 dir.create(dge_path, recursive = TRUE, showWarnings = FALSE)
 dir.create(tab_path, recursive = TRUE, showWarnings = FALSE)
@@ -90,10 +91,13 @@ JB22_pb_sce_list <- .combine_pseudobulk(
 ## Normalization ==============================================================
 
 # Normalize
-JB22_pb_norm_sce_list <- lapply(JB22_pb_sce_list, .normalize_pseudobulk)
+JB22_pb_norm_sce_list <- lapply(
+  JB22_pb_sce_list, 
+  .normalize_pseudobulk
+)
 
-# Plot: mean expr
-JB22_mean_expr_p <- lapply(
+# ggplot: mean expr
+JB22_mean_expr_gg_list <- lapply(
   names(JB22_pb_norm_sce_list), 
   function(tissue) {
     .plot_mean_expr(
@@ -102,19 +106,24 @@ JB22_mean_expr_p <- lapply(
     ) + 
     ggtitle(tissue)
 })
-JB22_mean_expr_p <- wrap_plots(JB22_mean_expr_p, nrow = 1)
 
 # Save the plot
 ggsave(
-  filename = file.path(fig_path, "mean_expr.svg"),
-  plot = JB22_mean_expr_p,
+  plot = wrap_plots(
+    JB22_mean_expr_gg_list, 
+    nrow = 1
+  ),
+  filename = file.path(
+    fig_path, 
+    "mean_expr.svg"
+  ),
   width = 10,
   height = 5,
   units = "cm"
 )
 
-# Plot: sample density
-JB22_smpl_density_p <- lapply(
+# ggpllot: sample density
+JB22_smpl_density_gg_list <- lapply(
   names(JB22_pb_norm_sce_list),
   function(tissue) {
     .plot_smpl_density(
@@ -124,61 +133,29 @@ JB22_smpl_density_p <- lapply(
     ) +
     ggtitle(tissue)
 })
-JB22_smpl_density_p <- wrap_plots(JB22_smpl_density_p, nrow = 1)
 
 # Save the plot
 ggsave(
-  filename = file.path(fig_path, "smpl_density.svg"),
-  plot = JB22_smpl_density_p,
+  plot = wrap_plots(
+    JB22_smpl_density_gg_list, 
+    nrow = 1
+  ),
+  filename = file.path(
+    fig_path, 
+    "smpl_density.svg"
+  ),
   width = 10,
   height = 5,
   units = "cm"
 )
 
 ## Cluster ====================================================================
-### fun. ----------------------------------------------------------------------
 
-# PCA: PC1 vs PC2
-.plot_PCA <- function(
-  sce
-){
-
-  # Coordinates
-  df <- data.frame(
-  PC1 = reducedDim(JB22_pb_sce, "PCA")[,1],
-  PC2 = reducedDim(JB22_pb_sce, "PCA")[,2],
-  tissue = colData(JB22_pb_sce)$tissue,
-  cell_type = colData(JB22_pb_sce)$cell_type
+# Join list
+JB22_pb_sce <- do.call(
+  cbind, 
+  JB22_pb_norm_sce_list
 )
-
-# Plot
-p <- ggplot(
-  data = df, 
-  mapping = aes(
-    x = PC1, 
-    y = PC2,
-    color = cell_type,
-    shape = tissue
-    )
-  ) +
-  geom_point(
-    size = 0.5
-  ) +
-  scale_color_manual(
-    values = .celltype_pal
-  ) +
-  labs(
-    color = "Cell type",
-    shape = "Tissue"
-  ) +
-  .theme_DK(
-    small_lgd = TRUE
-  )
-}
-
-### JB22 clusters -------------------------------------------------------------
-
-JB22_pb_sce <- do.call(cbind, JB22_pb_norm_sce_list)
 
 # PCA
 JB22_pb_sce <- runPCA(
@@ -194,440 +171,29 @@ JB22_pb_sce <- runPCA(
   )
 )
 
-# Plot: PC1 vs PC2
-JB22_PCA_p <- .plot_PCA(
-  sce = sce
-)
-
 # Save the plot
 ggsave(
-  filename = file.path(fig_path, "PCA.svg"),
-  plot = JB22_PCA_p,
+  plot = .plot_PCA(
+    sce = JB22_pb_sce
+  ),
+  filename = file.path(
+    fig_path, 
+    "PCA.svg"
+  ),
   width = 10,
   height = 5,
   units = "cm"
 )
 
-## DGE analysis ===============================================================
-### fun. ----------------------------------------------------------------------
-#### preparation --------------------------------------------------------------
+## JB22 bulk RNA-seq ==========================================================
 
-.prepare_metadata <- function(
-  sce_obj,
-  formula,
-  ref_level = NULL,
-  shuffle = FALSE
-) {
-
-  meta <- as.data.frame(colData(sce_obj))
-
-  # First variable = covariate of interest
-  vars <- all.vars(formula)
-  covariate <- vars[1]
-
-  missing <- setdiff(vars, colnames(meta))
-  if (length(missing) > 0) {
-    stop("Missing variables in colData: ", paste(missing, collapse = ", "))
-  }
-
-  # Ensure vars are factors
-  for (v in vars) {
-    if (!is.factor(meta[[v]])) {
-      meta[[v]] <- factor(meta[[v]])
-    }
-  }
-
-  # Conditional permutation of the covariate of interest
-  #
-  # If `shuffle = TRUE`, the covariate of interest (the first variable in the
-  # model formula) is randomly permuted across samples in order to destroy any
-  # real association between gene expression and that covariate. This is used
-  # to generate null data for benchmarking or permutation-based calibration.
-  #
-  # When additional variables are present in the model formula (e.g. batch, sex,
-  # subject), permutations are performed *within strata defined by those
-  # variables*. This is known as a conditional or restricted permutation.
-  #
-  # Example: formula = ~ condition + sex + batch
-  #
-  # In this case, `condition` will be shuffled only within groups defined by the
-  # combination of `(sex, batch)`. This preserves the design structure while
-  # removing the association between expression and the covariate of interest.
-  #
-  # This procedure ensures the permutation corresponds to the correct null
-  # hypothesis tested by the model:
-  #
-  #     expression ⟂ covariate | nuisance variables
-  #
-  # In other words, gene expression is independent of the covariate of interest
-  # conditional on the remaining variables in the design.
-  #
-  # If the model contains only the covariate of interest, a global permutation
-  # across all samples is performed.
-  #
-  # Note:
-  # Blocks that contain only a single level of the covariate cannot be permuted
-  # and will remain unchanged. This is expected and preserves statistical
-  # validity.
-  if (shuffle) {
-    shuffle_blocks <- setdiff(vars, covariate)
-
-    if (length(shuffle_blocks) == 0) {
-      perm <- sample.int(nrow(meta))
-      meta[[covariate]] <- meta[[covariate]][perm]
-
-    } else {
-      blocks <- interaction(meta[shuffle_blocks], drop = TRUE)
-      meta[[covariate]] <- ave(
-        meta[[covariate]],
-        blocks,
-        FUN = sample
-      )
-    }
-  }
-
-  # Select reference
-  if (!is.null(ref_level)) {
-    if (!ref_level %in% levels(meta[[covariate]])) {
-      stop(
-        "Reference level not found in ",
-        covariate, ": ",
-        ref_level
-      )
-    }
-    meta[[covariate]] <- relevel(
-      droplevels(meta[[covariate]]),
-      ref = ref_level
-    )
-  }
-  colData(sce_obj) <- S4Vectors::DataFrame(meta)
-
-  # Verbose
-  cat("Model design\n")
-  cat(sprintf(" - Formula:   %s\n", deparse(formula)))
-  cat(sprintf(" - Intercept: %s\n", if (!is.null(ref_level)) ref_level else levels(meta[[covariate]])[1]))
-  cat(sprintf(" - Nr. coefs: %d\n", ncol(model.matrix(formula, meta))))
-  cat(sprintf(" - Shuffled:  %s\n", if (shuffle) "TRUE" else "FALSE"))
-
-  # Return
-  return(sce_obj)
-}
-
-.edgeR_filterByExpr <- function(
-  sce_obj,
-  formula
-){
-
-  meta   <- as.data.frame(colData(sce_obj))
-  design <- model.matrix(formula, meta)
-  counts <- assay(sce_obj, "counts")
-
-  # edgeR: filter approach
-  dge  <- edgeR::DGEList(counts)
-  dge  <- edgeR::calcNormFactors(dge)
-
-  keep <- edgeR::filterByExpr(dge, design = design)
-  sce_obj <- sce_obj[keep, , drop = FALSE]
-
-  # Numbers for reporting
-  n_total <- nrow(counts)
-  n_keep  <- sum(keep)
-
-  # Verbose
-  cat("Feature selection\n")
-  cat(sprintf(" - Nr. features: %d (%d)\n", n_keep, n_total))
-
-  # Return
-  return(
-    list(
-      sce_obj = sce_obj,
-      method = "edgeR_filterByExpr"
-    )
-  )
-}
-
-#### dge method ---------------------------------------------------------------
-
-.dge_fit_limma_voom <- function(
-  sce_obj,
-  formula
-){
-
-  meta <- as.data.frame(colData(sce_obj))
-
-  # Model design
-  design <- model.matrix(formula, meta)
-
-  # edgeR obj.
-  counts <- assay(sce_obj, "counts")
-  dge <- edgeR::DGEList(counts)
-  dge <- edgeR::calcNormFactors(dge)
-
-  # Verbose
-  cat("Model fit\n")
-  cat(" - DGE approach: limma_voom\n")
-
-  # limma: fit & shrinkage
-  vobj <- limma::voom(dge, design, plot = FALSE)
-  fit  <- limma::lmFit(vobj, design)
-  fit  <- limma::eBayes(fit)
-
-  # Return
-  return(
-    list(
-      method = "limma_voom",
-      formula = formula,
-      fit_obj = fit,
-      design = design,
-      meta = meta
-    )
-  )
-}
-
-.dge_fit_edgeR_QLF <- function(
-  sce_obj, 
-  formula
-) {
-
-  meta <- as.data.frame(colData(sce_obj))
-
-  # Model design
-  design <- model.matrix(formula, meta)
-
-  # edgeR obj.
-  counts <- assay(sce_obj, "counts")
-  dge <- edgeR::DGEList(counts)
-  dge <- edgeR::calcNormFactors(dge)
-
-  # Verbose
-  cat("Model fit\n")
-  cat(" - DGE approach: edgeR_QLF\n")
-
-  # edgeR: fit & shrinkage
-  dge <- edgeR::estimateDisp(dge, design)
-  fit <- edgeR::glmQLFit(dge, design)
-
-  # Return
-  return(
-    list(
-      method = "edgeR_QLF",
-      formula = formula,
-      fit_obj = fit,
-      design = design,
-      meta = meta
-    )
-  )
-}
-
-.dge_fit_DESeq2_Wald <- function(
-  sce_obj,
-  formula
-) {
-
-  meta <- as.data.frame(colData(sce_obj))
-
-  # Counts
-  counts <- assay(sce_obj, "counts")
-
-  # DESeq2 dataset
-  dds <- DESeq2::DESeqDataSetFromMatrix(
-    countData = counts,
-    colData = meta,
-    design = formula
-  )
-
-  # Verbose
-  cat("Model fit\n")
-  cat(" - DGE approach: DESeq_Wald\n")
-
-  # DESeq2: fit & shrink
-  fit_obj <- DESeq2::DESeq(dds, test = "Wald", quiet = TRUE)
-  design  <- stats::model.matrix(design(fit_obj), colData(fit_obj))
-
-  # Return
-  return(
-    list(
-      method = "DESeq2_Wald",
-      formula = formula,
-      fit_obj = fit_obj,
-      design = design,
-      meta = meta
-    )
-  )
-}
-
-#### tt extraction method -----------------------------------------------------
-
-.get_coefs <- function(
-  formula, 
-  design, 
-  n_features
-) {
-
-  covariate <- all.vars(formula)[1]
-  coefs <- colnames(design)[grepl(paste0("^", covariate), colnames(design))]
-
-  if (length(coefs) == 0) {
-    stop("No coefficients found for covariate: ", covariate)
-  }
-
-  n_tests <- n_features * length(coefs)
-
-  # Verbose
-  cat("Extracted results\n")
-  cat(sprintf(" - Nr. coefs: %-8d (without intercept)\n", length(coefs)))
-  cat(sprintf(" - Nr. tests: %-8d (features × coefs)\n", n_tests))
-
-  # Return
-  return(coefs)
-}
-
-.harmonize_tt <- function(tt) {
-
-  rename_map <- c(
-    log2FoldChange = "logFC",
-    P.Value        = "pval",
-    PValue         = "pval",
-    pvalue         = "pval",
-    adj.P.Val      = "padj",
-    FDR            = "padj",
-    t              = "stat",
-    F              = "stat"
-  )
-
-  common <- intersect(names(rename_map), names(tt))
-  names(tt)[match(common, names(tt))] <- rename_map[common]
-
-  tt
-}
-
-.dge_extract <- function(x) {
-
-  fit     <- x$fit_obj
-  design  <- x$design
-  formula <- x$formula
-  method  <- x$method
-
-  coefs <- .get_coefs(formula, design, nrow(fit))
-
-  get_tt <- function(cf) {
-
-    tt <- switch(
-      method,
-
-      limma_voom =
-        limma::topTable(fit, coef = cf, number = Inf, sort.by = "none"),
-
-      edgeR_QLF = {
-        qlf <- edgeR::glmQLFTest(fit, coef = match(cf, colnames(design)))
-        edgeR::topTags(qlf, n = Inf)$table
-      },
-
-      DESeq2_Wald =
-        as.data.frame(DESeq2::results(fit, name = cf))
-    )
-
-    tt$feature <- rownames(tt)
-    tt$coef <- cf
-    rownames(tt) <- NULL
-
-    .harmonize_tt(tt)
-  }
-
-  do.call(rbind, lapply(coefs, get_tt))
-}
-
-#### core runner --------------------------------------------------------------
-
-.run_dge <- function(
-  sce_obj,
-  formula,
-  ref_level = NULL,
-  shuffle = FALSE,
-  filter_fun = NULL,
-  dge_fun
-) {
-
-  if(!is.function(dge_fun)){
-    stop("dge_fun must a function")
-  }
-
-  if (!is.null(filter_fun) && !is.function(filter_fun)) {
-    stop("filter_fun must be NULL or a function")
-  }
-
-  # Prepare meta
-  sce_obj <- .prepare_metadata(
-    sce_obj = sce_obj,
-    formula = formula,
-    ref_level = ref_level,
-    shuffle = shuffle
-  )
-
-  # Filter
-  if (is.null(filter_fun)) {
-    cat("Feature selection\n")
-    cat(sprintf(" - Nr. features: %d (no filter)\n", nrow(sce_obj)))
-  } else {
-    filter_obj <- filter_fun(
-      sce_obj = sce_obj,
-      formula = formula
-    )
-    sce_obj <- filter_obj$sce_obj
-  }
-
-  # Model fit
-  fit <- dge_fun(
-    sce_obj = sce_obj,
-    formula = formula
-  )
-
-  # Extract coef as tt
-  tt_obj <- .dge_extract(fit)
-  tt_obj$method    <- fit$method
-  tt_obj$formula   <- deparse(fit$formula)
-  tt_obj$ref_level <- ref_level
-  tt_obj$shuffle   <- shuffle
-
-  # Return
-  return(
-    list(
-      method = fit$method,
-      formula = fit$formula,
-      fit_obj = fit$fit_obj,
-      design = fit$design,
-      meta = fit$meta,
-      ref_level = ref_level,
-      filter_fun = if (is.null(filter_fun)) "none" else filter_obj$method,
-      tt_obj = tt_obj
-    )
-  )
-}
-
-.safe_run <- function(...) {
-  tryCatch(
-    {
-      res <- .run_dge(...)
-      res$success <- TRUE
-      res
-    },
-    error = function(e) {
-      list(
-        success = FALSE,
-        error   = conditionMessage(e)
-      )
-    }
-  )
-}
-
-#### pipelines ----------------------------------------------------------------
-
-tissue_cell_type_pipeline <- function(
+pipeline <- function(
   sce_obj,
   tissue,
   cell_type,
   formula,
   ref_level,
+  shuffle,
   filter_fun,
   dge_fun,
   out_path
@@ -639,7 +205,7 @@ tissue_cell_type_pipeline <- function(
     return(invisible(NULL))
   }
 
-  cat("------------------------------------------------------------------------\n")
+  cat("\n------------------------------------------------------------------\n")
   cat(sprintf("Run:     %s  %s\n", tissue, cell_type))
   cat(sprintf("Out dir: %s\n", outfile))
 
@@ -656,13 +222,10 @@ tissue_cell_type_pipeline <- function(
     sce_obj = ct_sce,
     formula = formula,
     ref_level = ref_level,
+    shuffle = shuffle,
     filter_fun = filter_fun,
     dge_fun = dge_fun
   )
-
-  res$tt_obj$tissue    <- tissue
-  res$tt_obj$cell_type <- cell_type
-  res$timestamp <- Sys.time()
 
   if (isFALSE(res$success)) {
 
@@ -685,17 +248,21 @@ tissue_cell_type_pipeline <- function(
     )
 
   } else {
+
+    # Add meta
+    res$tt_obj$tissue    <- tissue
+    res$tt_obj$cell_type <- cell_type
+    res$timestamp <- Sys.time()
+    
     # Save
     saveRDS(res, outfile)
   }
 
   # Return
-  cat("------------------------------------------------------------------------\n")
+  cat("------------------------------------------------------------------\n")
   return(NULL)
 }
 
-### JB22 limma bulk RNA-seq ---------------------------------------------------
-#### Within tissue within cell type -------------------------------------------
 dge_methods <- list(
   edgeR_QLF = .dge_fit_edgeR_QLF,
   limma_voom = .dge_fit_limma_voom,
@@ -707,7 +274,7 @@ dge_formulas <- list(
   genotype_sample = ~ genotype + sample
 )
 
-dge_bios <- do.call(
+dge_datasets <- do.call(
   rbind,
   lapply(names(JB22_pb_sce_list), function(tissue) {
     sce <- JB22_pb_sce_list[[tissue]]
@@ -716,8 +283,8 @@ dge_bios <- do.call(
   })
 )
 
-tasks <- merge(
-  dge_bios,
+dge_tasks <- merge(
+  dge_datasets,
   expand.grid(
     method  = names(dge_methods),
     formula = names(dge_formulas),
@@ -725,37 +292,39 @@ tasks <- merge(
   ),
   by = NULL
 )
-#tasks <- tasks[7,]
+# dge_tasks <- dge_tasks[7,]
 
 # Set the number of used cores
 n_cores <- as.integer(Sys.getenv("NSLOTS", unset = 1))
-n_workers <- min(n_cores, nrow(tasks))
+n_workers <- min(n_cores, nrow(dge_tasks))
 register(MulticoreParam(n_workers))
 
-m <- bplapply(seq_len(nrow(tasks)), function(i) {
+m <- bplapply(seq_len(nrow(dge_tasks)), function(i) {
 
-  tissue <- tasks$tissue[i]
-  ct     <- tasks$cell_type[i]
-  method <- tasks$method[i]
-  form   <- tasks$formula[i]
+  tissue <- dge_tasks$tissue[i]
+  ct     <- dge_tasks$cell_type[i]
+  method <- dge_tasks$method[i]
+  form   <- dge_tasks$formula[i]
 
   # Outfile
   out_path <- file.path(
-    "results/JB22_pseudobulk/dge",
+    res_path, "dge",
     paste0(method, "_", form, "_", tissue, "_", ct)
   )
 
-  tissue_cell_type_pipeline(
+  pipeline(
     sce_obj = JB22_pb_sce_list[[tissue]],
     tissue = tissue,
     cell_type = ct,
     formula = dge_formulas[[form]],
     ref_level = "NTC",
+    shuffle = FALSE,
     filter_fun = .edgeR_filterByExpr,
     dge_fun = dge_methods[[method]],
     out_path = out_path
   )
 })
 
-# limma_res <- readRDS("results/JB22_pseudobulk/dge/limma_voom_genotype_Liver_Bcells.rds")
+# limma_res <- readRDS("results/JB22_pseudobulk_orig/dge/limma_voom_genotype_Liver_Bcells.rds")
 # as.data.table(limma_res$tt_obj)
+
