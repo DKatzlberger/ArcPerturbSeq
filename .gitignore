@@ -15,7 +15,6 @@
 ## Excluded directories
 # Generated data
 /results
-/presentations
 
 # Library manager
 /renv
