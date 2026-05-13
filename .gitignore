@@ -9,7 +9,6 @@
 ## Excluded files
 # Software settings
 .Renviron
-.Rprofile
 .vscode
 
 ## Excluded directories
