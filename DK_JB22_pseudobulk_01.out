@@ -341,3 +341,78 @@ Extracted results
  - Nr. tests: 4380528  (features × coefs)
 ------------------------------------------------------------------
 
+
+------------------------------------------------------------------
+Run:     Liver  Bcells
+Out dir: results/JB22_pseudobulk_orig/dge/edgeR_QLF_genotype_sample_Liver_Bcells.rds
+Model design
+ - Formula:   ~genotype + sample
+ - Intercept: NTC
+ - Nr. coefs: 166
+ - Shuffled:  FALSE
+Feature selection
+ - Nr. features: 7653 (33699)
+Model fit
+ - DGE approach: edgeR_QLF
+Extracted results
+ - Nr. coefs: 165      (without intercept)
+ - Nr. tests: 1262745  (features × coefs)
+------------------------------------------------------------------
+
+
+------------------------------------------------------------------
+Run:     Liver  Bcells
+Out dir: results/JB22_pseudobulk_orig/dge/DESeq2_Wald_genotype_sample_Liver_Bcells.rds
+Model design
+ - Formula:   ~genotype + sample
+ - Intercept: NTC
+ - Nr. coefs: 166
+ - Shuffled:  FALSE
+Feature selection
+ - Nr. features: 7653 (33699)
+converting counts to integer mode
+  Note: levels of factors in the design contain characters other than
+  letters, numbers, '_' and '.'. It is recommended (but not required) to use
+  only letters, numbers, and delimiters '_' or '.', as these are safe characters
+  for column names in R. [This is a message, not a warning or an error]
+Model fit
+ - DGE approach: DESeq_Wald
+  Note: levels of factors in the design contain characters other than
+  letters, numbers, '_' and '.'. It is recommended (but not required) to use
+  only letters, numbers, and delimiters '_' or '.', as these are safe characters
+  for column names in R. [This is a message, not a warning or an error]
+  Note: levels of factors in the design contain characters other than
+  letters, numbers, '_' and '.'. It is recommended (but not required) to use
+  only letters, numbers, and delimiters '_' or '.', as these are safe characters
+  for column names in R. [This is a message, not a warning or an error]
+  Note: levels of factors in the design contain characters other than
+  letters, numbers, '_' and '.'. It is recommended (but not required) to use
+  only letters, numbers, and delimiters '_' or '.', as these are safe characters
+  for column names in R. [This is a message, not a warning or an error]
+Extracted results
+ - Nr. coefs: 165      (without intercept)
+ - Nr. tests: 1262745  (features × coefs)
+------------------------------------------------------------------
+
+
+------------------------------------------------------------------
+Run:     Liver  Bcells
+Out dir: results/JB22_pseudobulk_orig/dge/DESeq2_Wald_genotype_Liver_Bcells.rds
+Model design
+ - Formula:   ~genotype
+ - Intercept: NTC
+ - Nr. coefs: 161
+ - Shuffled:  FALSE
+Feature selection
+ - Nr. features: 7653 (33699)
+converting counts to integer mode
+Model fit
+ - DGE approach: DESeq_Wald
+-- note: fitType='parametric', but the dispersion trend was not well captured by the
+   function: y = a/x + b, and a local regression fit was automatically substituted.
+   specify fitType='local' or 'mean' to avoid this message next time.
+Extracted results
+ - Nr. coefs: 160      (without intercept)
+ - Nr. tests: 1224480  (features × coefs)
+------------------------------------------------------------------
+

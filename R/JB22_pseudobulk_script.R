@@ -4,22 +4,8 @@
 ## Experimental description ===================================================
 
 ## Title: Arc Institute in vivo pertubation screens
-## Author: dkatzlberger
+## Author: DKatzlberger
 ## Date: 21.01.2026
-
-## Sample            (biological replicate)
-## └── Genotype      (knockout)
-##     └── Guide     (technical replication of knockout)
-##         └── Cells (cells per guide)
-
-## Single cell pseudobulks per tissue
-## Tissues: Peritoneum, Liver, Spleen
-
-## Available cell types per tissue
-## Peritoneum: Macrophages
-## Liver:      Bcells, Monocytes, Neutrophiles
-## Spleen:     Bcells
-
 
 ## Libraries =================================================================
 
@@ -28,7 +14,12 @@ source("R/utils.R")
 source("R/JB22_pseudobulk_utils.R")
 
 # Activate renv + load libs.
-.script_startup()
+.script_startup(
+  c(
+    "anndataR",
+    "SingleCellExperiment"
+  )
+)
 
 ## Directories ================================================================
 
@@ -87,6 +78,7 @@ JB22_pb_sce_list <- .combine_pseudobulk(
   exp_name = "JB22_pseudobulk",
   output = "list"
 )
+
 
 ## Normalization ==============================================================
 

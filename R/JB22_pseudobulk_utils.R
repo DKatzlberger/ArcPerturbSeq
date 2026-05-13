@@ -1,52 +1,5 @@
 ## max. code width ============================================================
 
-.script_startup <- function(){
-
-  cat("\n")
-  t0 <- Sys.time()
-
-  # renv
-  renv::load()
-  t1 <- Sys.time()
-
-  # Libraries
-  suppressPackageStartupMessages({
-    library(data.table, quietly = TRUE)
-    library(anndataR, quietly = TRUE)
-    library(SingleCellExperiment, quietly = TRUE)
-    library(dream, quietly = TRUE)
-    library(edgeR, quietly = TRUE)
-    library(ggplot2, quietly = TRUE)
-    library(variancePartition, quietly = TRUE)
-    library(scater, quietly = TRUE)
-    library(scran, quietly = TRUE)
-    library(patchwork, quietly = TRUE)
-  })
-
-  t2 <- Sys.time()
-  
-  # Report
-  cat(sprintf(
-    "Startup completed in %.2f seconds\n",
-    as.numeric(difftime(t2, t0, units = "secs"))
-  ))
-
-  cat(sprintf(
-    "- renv activation:    %.2f seconds\n",
-    as.numeric(difftime(t1, t0, units = "secs"))
-  ))
-
-  cat(sprintf(
-    "- library attachment: %.2f seconds\n",
-    as.numeric(difftime(t2, t1, units = "secs"))
-  ))
-
-  # Get renv status
-
-  # Return
-  return(invisible(TRUE))
-}
-
 .load_pseudobulk <- function(
   base_dir, 
   files,
@@ -750,16 +703,6 @@
     tt$feature <- rownames(tt)
     tt$coef <- cf
     rownames(tt) <- NULL
-
-    # Understand contrast
-    var <- all.vars(x$formula)[1]
-    ref <- levels(x$meta[[var]])[1]
-
-    lvl <- sub(paste0("^", var, "_?"), "", cf)
-    lvl <- sub("_vs_.*$", "", lvl)
-
-    tt$comparison <- paste0(lvl, " vs ", ref)
-
     tt
   }
 
