@@ -9,7 +9,6 @@
 ## Excluded files
 # Software settings
 .Renviron
-.vscode
 
 ## Excluded directories
 # Generated data
@@ -17,3 +16,4 @@
 
 # Library manager
 /renv
+/.vscode
